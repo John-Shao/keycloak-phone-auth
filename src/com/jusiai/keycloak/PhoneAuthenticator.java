@@ -190,12 +190,15 @@ public class PhoneAuthenticator implements Authenticator {
 
     private UserModel findOrCreateUser(AuthenticationFlowContext ctx, String phone) {
         RealmModel realm = ctx.getRealm();
-        UserModel  user  = ctx.getSession().users().getUserByUsername(realm, phone);
+        // Search by phone_number attribute so login still works after username is changed
+        UserModel user = ctx.getSession().users()
+                .searchForUserByUserAttributeStream(realm, "phoneNumber", phone)
+                .findFirst().orElse(null);
         if (user == null) {
             LOG.info("PhoneAuth: creating new user for phone " + phone);
             user = ctx.getSession().users().addUser(realm, phone);
             user.setEnabled(true);
-            user.setSingleAttribute("phone_number", phone);
+            user.setSingleAttribute("phoneNumber", phone);
         }
         return user;
     }

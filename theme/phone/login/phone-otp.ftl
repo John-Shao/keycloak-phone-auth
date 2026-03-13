@@ -5,7 +5,7 @@
         ${msg("doVerify")}
 
     <#elseif section = "info">
-        验证码已发送至 <strong>${(phone!'')}</strong>，${msg("otp_expiry_seconds", "300")} 秒内有效
+        验证码已发送至 <strong>${(phone!'')}</strong>，10 分钟内有效
 
     <#elseif section = "form">
 
@@ -43,12 +43,10 @@
                        inputmode="numeric" />
             </div>
 
-            <div class="${properties.kcFormGroupClass!}">
-                <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
-                    <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
-                           type="submit"
-                           value="${msg("doVerify")}" />
-                </div>
+            <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
+                <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
+                       type="submit"
+                       value="${msg("doVerify")}" />
             </div>
         </form>
 
