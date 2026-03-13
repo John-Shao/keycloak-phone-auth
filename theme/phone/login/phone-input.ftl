@@ -1,8 +1,11 @@
 <#import "template.ftl" as layout>
-<@layout.registrationLayout displayInfo=false; section>
+<@layout.registrationLayout displayInfo=true; section>
 
     <#if section = "header">
         ${msg("doGetVerificationCode")}
+
+    <#elseif section = "info">
+        输入手机号，通过短信验证码登录
 
     <#elseif section = "form">
         <form id="kc-phone-input-form"
