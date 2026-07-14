@@ -70,7 +70,14 @@ public class PhoneAuthenticatorFactory implements AuthenticatorFactory {
         demoOtp.setType(ProviderConfigProperty.STRING_TYPE);
         demoOtp.setHelpText("Fixed OTP accepted for demo phones (mirror backend MOBILE_AUTH_DEMO_OTP). Blank disables demo mode.");
 
-        CONFIG_PROPERTIES = Arrays.asList(gatewayUrl, gatewayToken, otpLength, otpExpiry, maxAttempts, demoPhones, demoOtp);
+        ProviderConfigProperty emailDomain = new ProviderConfigProperty();
+        emailDomain.setName("email_domain");
+        emailDomain.setLabel("Synthetic Email Domain");
+        emailDomain.setType(ProviderConfigProperty.STRING_TYPE);
+        emailDomain.setDefaultValue("phone.we-meet.online");
+        emailDomain.setHelpText("Domain for synthesizing phone users' email (<phone>@<domain>) so Keycloak's VERIFY_PROFILE doesn't block phone-only login.");
+
+        CONFIG_PROPERTIES = Arrays.asList(gatewayUrl, gatewayToken, otpLength, otpExpiry, maxAttempts, demoPhones, demoOtp, emailDomain);
     }
 
     @Override public String getId()           { return PROVIDER_ID; }

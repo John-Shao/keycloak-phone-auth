@@ -190,8 +190,28 @@ public class PhoneAuthenticator implements Authenticator {
             user.setEnabled(true);
             user.setSingleAttribute("phoneNumber", phone);
         }
+        // 补全缺失 profile（新老用户都补）——手机用户没 email/姓名会触发 Keycloak
+        // VERIFY_PROFILE required action、卡在「Update Account Information」页。合成后
+        // profile 完整即不再触发，老用户下次登录自动补上（无需关 required action）。
+        fillProfile(ctx, user, phone);
         return user;
     }
+
+    private void fillProfile(AuthenticationFlowContext ctx, UserModel user, String phone) {
+        if (isBlank(user.getEmail())) {
+            // 合成 email：<手机号>@<email_domain>（默认 phone.we-meet.online，config 可覆盖）
+            user.setEmail(phone + "@" + strCfg(ctx, "email_domain", "phone.we-meet.online"));
+            user.setEmailVerified(true);  // 免 VERIFY_EMAIL
+        }
+        if (isBlank(user.getFirstName())) {
+            user.setFirstName("meet-" + phone.substring(phone.length() - 4));  // meet-<后4位>
+        }
+        if (isBlank(user.getLastName())) {
+            user.setLastName("we");
+        }
+    }
+
+    private static boolean isBlank(String s) { return s == null || s.trim().isEmpty(); }
 
     private String generateOtp(int length) {
         SecureRandom rng = new SecureRandom();
