@@ -38,4 +38,10 @@ FROM kc
 COPY --from=builder /build/phone-auth.jar /opt/keycloak/providers/
 COPY theme/phone /opt/keycloak/themes/phone
 
-RUN /opt/keycloak/bin/kc.sh build
+# Bake build-time options so the image starts with `--optimized` (no per-start
+# augmentation). Critical on the 2C2G box where the auto-build OOM-kills (code 137).
+# Keep in sync with the build-time env in we-meet deploy/aliyun/keycloak/compose.yaml.
+RUN /opt/keycloak/bin/kc.sh build \
+    --db=postgres \
+    --health-enabled=true \
+    --features=token-exchange,admin-fine-grained-authz
