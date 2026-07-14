@@ -202,6 +202,10 @@ public class PhoneAuthenticator implements Authenticator {
             // 合成 email：<手机号>@<email_domain>（默认 phone.we-meet.online，config 可覆盖）
             user.setEmail(phone + "@" + strCfg(ctx, "email_domain", "phone.we-meet.online"));
             user.setEmailVerified(true);  // 免 VERIFY_EMAIL
+            // 隐患：只在 email 缺失时设 verified。早于本功能建号的老手机用户（后端已写
+            // 合成 email、但 emailVerified=Off）email 非空 → 不进此分支、verified 仍 Off。
+            // 当前无碍（realm 未启用 Verify Email）；启用则需另处理，见 docs/installation/
+            // sso-integration-plan.md「后续 4」隐患。
         }
         if (isBlank(user.getFirstName())) {
             user.setFirstName("meet-" + phone.substring(phone.length() - 4));  // meet-<后4位>
