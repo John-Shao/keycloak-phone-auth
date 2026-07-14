@@ -1,0 +1,144 @@
+/* we-meet 品牌化 Keycloak 手机验证码登录页。
+ * 参考被废弃的自定义登录 modal 观感：浅灰底 + 白卡片圆角 + LaSuite Meet logo +
+ * 蓝色主按钮。覆盖 Keycloak 25（keycloak.v2 / PatternFly）默认深色样式。
+ * ⚠️ CSS 覆盖依赖 Keycloak 渲染出的类名，部署后按实际渲染微调选择器。 */
+
+:root {
+  --wm-primary: #2563eb;
+  --wm-primary-hover: #1d4ed8;
+  --wm-text: #202328;
+  --wm-text-muted: #6b7280;
+  --wm-border: #e5e7eb;
+  --wm-bg: #f5f6f8;
+}
+
+/* ---- 背景：Keycloak 默认深色 → 浅灰（参考 modal 浅底） ---- */
+html, body,
+body.login-pf,
+.login-pf-page,
+.login-pf body {
+  background: var(--wm-bg) !important;
+}
+/* 去掉默认背景图/遮罩 */
+.login-pf-page:before,
+.login-pf-page-header { display: none !important; }
+
+/* ---- Header：隐藏默认 "MEET" 文字，换 LaSuite Meet logo ---- */
+#kc-header,
+#kc-header-wrapper {
+  color: transparent !important;
+  font-size: 0 !important;
+  padding: 1.75rem 0 0.75rem !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+#kc-header-wrapper::after {
+  content: "";
+  display: inline-block;
+  width: 168px;
+  height: 33px;
+  background: url(../img/logo.svg) no-repeat center / contain;
+}
+
+/* ---- 卡片：白底、圆角、柔和阴影（参考 modal 白卡片） ---- */
+.card-pf,
+#kc-content,
+.login-pf-page .card-pf {
+  background: #fff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 30px rgba(16, 24, 40, 0.10) !important;
+  padding: 2rem 2.25rem !important;
+  max-width: 26rem !important;
+  margin: 1rem auto !important;
+}
+
+/* ---- 标题（header section）+ 副文字（info section） ---- */
+#kc-page-title {
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  color: var(--wm-text) !important;
+  text-align: center !important;
+  margin-bottom: 0.25rem !important;
+}
+#kc-info-message,
+#kc-info,
+.instruction,
+#kc-content-wrapper > .instruction {
+  color: var(--wm-text-muted) !important;
+  font-size: 0.875rem !important;
+  text-align: center !important;
+}
+
+/* ---- 表单：标签 + 输入框（圆角、浅边、focus 蓝） ---- */
+label,
+.pf-c-form__label,
+.control-label {
+  color: var(--wm-text) !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+}
+input[type="tel"],
+input[type="text"],
+input.pf-c-form-control,
+input.form-control {
+  border: 1px solid var(--wm-border) !important;
+  border-radius: 8px !important;
+  padding: 0.65rem 0.85rem !important;
+  font-size: 1rem !important;
+  width: 100% !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  color: var(--wm-text) !important;
+}
+input:focus {
+  border-color: var(--wm-primary) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  outline: none !important;
+}
+
+/* ---- 主按钮：蓝、块级、圆角（参考 modal 主按钮） ---- */
+.pf-c-button.pf-m-primary,
+input[type="submit"].pf-m-primary,
+#kc-form-buttons input[type="submit"],
+.btn-primary {
+  background: var(--wm-primary) !important;
+  border-color: var(--wm-primary) !important;
+  border-radius: 8px !important;
+  padding: 0.7rem 1rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  width: 100% !important;
+  margin-top: 0.5rem !important;
+}
+.pf-c-button.pf-m-primary:hover,
+#kc-form-buttons input[type="submit"]:hover,
+.btn-primary:hover {
+  background: var(--wm-primary-hover) !important;
+  border-color: var(--wm-primary-hover) !important;
+}
+
+/* ---- 重新发送：次要（文字按钮，弱化） ---- */
+.pf-c-button.pf-m-default,
+.btn-default {
+  background: transparent !important;
+  border: none !important;
+  color: var(--wm-primary) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+
+/* ---- 报错提示：红色浅底 ---- */
+.pf-c-alert.pf-m-danger,
+.alert-error {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border-radius: 8px !important;
+}
+.pf-c-alert.pf-m-success,
+.alert-success {
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border-radius: 8px !important;
+}
