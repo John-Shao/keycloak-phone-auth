@@ -58,7 +58,19 @@ public class PhoneAuthenticatorFactory implements AuthenticatorFactory {
         maxAttempts.setDefaultValue("3");
         maxAttempts.setHelpText("Number of wrong OTP entries allowed before the session is invalidated.");
 
-        CONFIG_PROPERTIES = Arrays.asList(gatewayUrl, gatewayToken, otpLength, otpExpiry, maxAttempts);
+        ProviderConfigProperty demoPhones = new ProviderConfigProperty();
+        demoPhones.setName("demo_phones");
+        demoPhones.setLabel("Demo Phone Numbers");
+        demoPhones.setType(ProviderConfigProperty.STRING_TYPE);
+        demoPhones.setHelpText("Comma-separated phones that bypass real SMS and accept the fixed Demo OTP (mirror backend MOBILE_AUTH_DEMO_PHONES). Blank disables demo mode.");
+
+        ProviderConfigProperty demoOtp = new ProviderConfigProperty();
+        demoOtp.setName("demo_otp");
+        demoOtp.setLabel("Demo OTP");
+        demoOtp.setType(ProviderConfigProperty.STRING_TYPE);
+        demoOtp.setHelpText("Fixed OTP accepted for demo phones (mirror backend MOBILE_AUTH_DEMO_OTP). Blank disables demo mode.");
+
+        CONFIG_PROPERTIES = Arrays.asList(gatewayUrl, gatewayToken, otpLength, otpExpiry, maxAttempts, demoPhones, demoOtp);
     }
 
     @Override public String getId()           { return PROVIDER_ID; }

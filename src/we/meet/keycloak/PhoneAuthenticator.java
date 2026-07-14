@@ -91,14 +91,9 @@ public class PhoneAuthenticator implements Authenticator {
         UserModel user = findOrCreateUser(ctx, phone);
         ctx.setUser(user);
 
-        // Generate and send OTP
-        String otp = generateOtp(intCfg(ctx, "otp_length", 6));
-        boolean sent = SmsGatewayClient.sendOtp(
-                strCfg(ctx, "sms_gateway_url", ""),
-                strCfg(ctx, "sms_gateway_token", ""),
-                phone, otp);
-
-        if (!sent) {
+        // Generate and send OTP (demo phones use a fixed OTP + skip SMS)
+        String otp = issueOtp(ctx, phone);
+        if (otp == null) {
             clearNotes(ctx);
             ctx.challenge(ctx.form().setError("sms.failed").createForm("phone-input.ftl"));
             return;
@@ -159,13 +154,8 @@ public class PhoneAuthenticator implements Authenticator {
     // -------------------------------------------------------------------------
 
     private void handleResend(AuthenticationFlowContext ctx, String phone) {
-        String otp = generateOtp(intCfg(ctx, "otp_length", 6));
-        boolean sent = SmsGatewayClient.sendOtp(
-                strCfg(ctx, "sms_gateway_url", ""),
-                strCfg(ctx, "sms_gateway_token", ""),
-                phone, otp);
-
-        if (sent) {
+        String otp = issueOtp(ctx, phone);
+        if (otp != null) {
             ctx.getAuthenticationSession().setAuthNote(NOTE_OTP,      otp);
             ctx.getAuthenticationSession().setAuthNote(NOTE_OTP_TIME, Long.toString(System.currentTimeMillis()));
             ctx.getAuthenticationSession().setAuthNote(NOTE_ATTEMPTS, "0");
@@ -208,6 +198,34 @@ public class PhoneAuthenticator implements Authenticator {
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) sb.append(rng.nextInt(10));
         return sb.toString();
+    }
+
+    /**
+     * Issue an OTP for the phone. Demo phones (config demo_phones, comma-separated)
+     * get the fixed demo_otp with SMS skipped — mirrors the backend's
+     * MOBILE_AUTH_DEMO_PHONES / MOBILE_AUTH_DEMO_OTP, so app-review / test logins
+     * keep working now that web login goes through Keycloak instead of the mobile
+     * OTP API. Returns the OTP to store, or null if the SMS gateway send failed.
+     */
+    private String issueOtp(AuthenticationFlowContext ctx, String phone) {
+        String demoOtp = strCfg(ctx, "demo_otp", "");
+        if (!demoOtp.isEmpty() && isDemoPhone(ctx, phone)) {
+            LOG.info("PhoneAuth: demo phone " + phone + " — fixed OTP, SMS skipped");
+            return demoOtp;
+        }
+        String otp = generateOtp(intCfg(ctx, "otp_length", 6));
+        boolean sent = SmsGatewayClient.sendOtp(
+                strCfg(ctx, "sms_gateway_url", ""),
+                strCfg(ctx, "sms_gateway_token", ""),
+                phone, otp);
+        return sent ? otp : null;
+    }
+
+    private boolean isDemoPhone(AuthenticationFlowContext ctx, String phone) {
+        for (String p : strCfg(ctx, "demo_phones", "").split(",")) {
+            if (p.trim().equals(phone)) return true;
+        }
+        return false;
     }
 
     private void clearNotes(AuthenticationFlowContext ctx) {
