@@ -20,7 +20,7 @@
                 <div class="wm-col-title">扫码登录</div>
                 <#if qrImage?? && qrImage?has_content>
                     <div id="wm-scan" class="wm-scan"
-                         data-ready="${readyBase}/api/qr-login/ready/?token=${qrToken}"
+                         data-ready="${readBase}/api/qr-login/ready/?token=${qrToken}"
                          data-interval="2500">
                         <div class="wm-qr-box">
                             <img class="wm-qr" src="${qrImage}" alt="登录二维码" width="200" height="200" />
