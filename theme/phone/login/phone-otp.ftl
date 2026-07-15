@@ -1,63 +1,60 @@
 <#import "template.ftl" as layout>
-<@layout.registrationLayout displayInfo=true; section>
+<@layout.registrationLayout displayInfo=false; section>
 
     <#if section = "header">
-        ${msg("doVerify")}
-
-    <#elseif section = "info">
-        验证码已发送至 <strong>${(phone!'')}</strong>，10 分钟内有效
+        <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg" alt="we-meet" />
+        <span class="wm-page-title">输入验证码</span>
 
     <#elseif section = "form">
 
+        <#assign p = (phone!'')>
+        <#if p?length == 11>
+            <#assign shownPhone = p?substring(0,3) + "****" + p?substring(7)>
+        <#else>
+            <#assign shownPhone = p>
+        </#if>
+        <p class="wm-subtitle">验证码已发送至 <strong>+86 ${shownPhone}</strong></p>
+
         <#if resent?? && resent>
-            <div class="${properties.kcAlertClass!} pf-m-success">
-                <span class="${properties.kcAlertTitleClass!}">${msg("otp.sent")}</span>
-            </div>
+            <div class="wm-alert wm-alert--success">验证码已重新发送</div>
         </#if>
-
         <#if message?has_content && message.type = "error">
-            <div class="${properties.kcAlertClass!} pf-m-danger ${properties.kcAlertErrorClass!}">
-                <div class="pf-v5-c-alert__icon">
-                    <i class="pficon-error-circle-o" aria-hidden="true"></i>
-                </div>
-                <span class="${properties.kcAlertTitleClass!}">${kcSanitize(message.summary)?no_esc}</span>
-            </div>
+            <div class="wm-alert wm-alert--error">${kcSanitize(message.summary)?no_esc}</div>
         </#if>
 
-        <!-- OTP verify form -->
-        <form id="kc-otp-verify-form"
-              action="${url.loginAction}"
-              method="post">
+        <!-- 重发表单：由验证码输入框内的后缀按钮通过 form= 属性提交 -->
+        <form id="wm-resend-form" action="${url.loginAction}" method="post">
+            <input type="hidden" name="action" value="resend" />
+        </form>
+
+        <form id="kc-otp-verify-form" class="wm-form" action="${url.loginAction}" method="post">
             <input type="hidden" name="action" value="verify" />
 
-            <div class="${properties.kcFormGroupClass!}">
-                <label for="otp" class="${properties.kcLabelClass!}">验证码</label>
+            <div class="wm-field">
                 <input type="text"
                        id="otp"
                        name="otp"
-                       class="${properties.kcInputClass!}"
+                       class="wm-input"
                        placeholder="请输入验证码"
                        maxlength="8"
                        autofocus
                        autocomplete="one-time-code"
                        inputmode="numeric" />
+                <button type="submit"
+                        form="wm-resend-form"
+                        id="wm-resend-btn"
+                        class="wm-suffix-btn"
+                        data-label="重新发送">重新发送</button>
             </div>
 
-            <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
-                <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
-                       type="submit"
-                       value="${msg("doVerify")}" />
-            </div>
+            <button type="submit" class="wm-btn wm-btn--primary">验证登录</button>
         </form>
 
-        <!-- Resend form -->
-        <form action="${url.loginAction}" method="post" style="margin-top:0.75rem;">
-            <input type="hidden" name="action" value="resend" />
-            <button type="submit"
-                    class="${properties.kcButtonClass!} ${properties.kcButtonDefaultClass!} ${properties.kcButtonBlockClass!}">
-                ${msg("doResend")}
-            </button>
-        </form>
+        <p class="wm-helper">
+            <a class="wm-link" href="${url.loginRestartFlowUrl}">‹ 重新输入手机号</a>
+        </p>
+
+        <script src="${url.resourcesPath}/js/otp-countdown.js"></script>
 
     </#if>
 

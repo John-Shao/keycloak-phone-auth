@@ -1,144 +1,212 @@
 /* we-meet 品牌化 Keycloak 手机验证码登录页。
- * 参考被废弃的自定义登录 modal 观感：浅灰底 + 白卡片圆角 + LaSuite Meet logo +
- * 蓝色主按钮。覆盖 Keycloak 25（keycloak.v2 / PatternFly）默认深色样式。
- * ⚠️ CSS 覆盖依赖 Keycloak 渲染出的类名，部署后按实际渲染微调选择器。 */
+ * 观感参考抖音登录窗口：浅底居中卡片 + 灰底填充输入框 + 品牌蓝主按钮 +
+ * 协议页脚。模板已改用自有 wm-* 类，本文件只需覆盖父主题（keycloak / 旧
+ * PatternFly）渲染出的外层骨架（.login-pf-page / .card-pf / #kc-page-title …），
+ * 表单内部一律走 wm-* 自有类，不再依赖 PatternFly 内部类名，稳定。 */
 
 :root {
   --wm-primary: #2563eb;
   --wm-primary-hover: #1d4ed8;
-  --wm-text: #202328;
+  --wm-primary-soft: #a9c0f5;
+  --wm-text: #1a1c1f;
   --wm-text-muted: #6b7280;
-  --wm-border: #e5e7eb;
-  --wm-bg: #f5f6f8;
+  --wm-text-faint: #9aa0a6;
+  --wm-field-bg: #f5f6f8;
+  --wm-divider: #e2e4e8;
+  --wm-bg-top: #eaf0ff;
+  --wm-bg-bottom: #f4f5f7;
 }
 
-/* ---- 背景：Keycloak 默认深色 → 浅灰（参考 modal 浅底） ---- */
+/* ---- 页面：浅蓝渐变底 + 垂直居中卡片（modal 观感） ---- */
 html, body,
 body.login-pf,
-.login-pf-page,
 .login-pf body {
-  background: var(--wm-bg) !important;
+  background: linear-gradient(180deg, var(--wm-bg-top) 0%, var(--wm-bg-bottom) 46%) !important;
+  min-height: 100vh;
 }
-/* 去掉默认背景图/遮罩 */
+.login-pf-page {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem !important;
+}
+/* 去掉父主题默认背景图 / 顶部 realm 名 header */
 .login-pf-page:before,
-.login-pf-page-header { display: none !important; }
-
-/* ---- Header：隐藏默认 "MEET" 文字，换 LaSuite Meet logo ---- */
 #kc-header,
-#kc-header-wrapper {
-  color: transparent !important;
-  font-size: 0 !important;
-  padding: 1.75rem 0 0.75rem !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-}
-#kc-header-wrapper::after {
-  content: "";
-  display: inline-block;
-  width: 168px;
-  height: 33px;
-  background: url(../img/logo.svg) no-repeat center / contain;
+.login-pf-page-header {
+  display: none !important;
 }
 
-/* ---- 卡片：白底、圆角、柔和阴影（参考 modal 白卡片） ---- */
+/* ---- 卡片：白底、大圆角、柔和阴影 ---- */
 .card-pf,
-#kc-content,
 .login-pf-page .card-pf {
   background: #fff !important;
   border: none !important;
-  border-radius: 14px !important;
-  box-shadow: 0 8px 30px rgba(16, 24, 40, 0.10) !important;
-  padding: 2rem 2.25rem !important;
-  max-width: 26rem !important;
-  margin: 1rem auto !important;
-}
-
-/* ---- 标题（header section）+ 副文字（info section） ---- */
-#kc-page-title {
-  font-size: 1.35rem !important;
-  font-weight: 700 !important;
-  color: var(--wm-text) !important;
-  text-align: center !important;
-  margin-bottom: 0.25rem !important;
-}
-#kc-info-message,
-#kc-info,
-.instruction,
-#kc-content-wrapper > .instruction {
-  color: var(--wm-text-muted) !important;
-  font-size: 0.875rem !important;
-  text-align: center !important;
-}
-
-/* ---- 表单：标签 + 输入框（圆角、浅边、focus 蓝） ---- */
-label,
-.pf-c-form__label,
-.control-label {
-  color: var(--wm-text) !important;
-  font-weight: 500 !important;
-  font-size: 0.875rem !important;
-}
-input[type="tel"],
-input[type="text"],
-input.pf-c-form-control,
-input.form-control {
-  border: 1px solid var(--wm-border) !important;
-  border-radius: 8px !important;
-  padding: 0.65rem 0.85rem !important;
-  font-size: 1rem !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(20, 28, 44, 0.12) !important;
+  padding: 2.4rem 2rem 2rem !important;
   width: 100% !important;
-  box-shadow: none !important;
-  background: #fff !important;
-  color: var(--wm-text) !important;
+  max-width: 380px !important;
+  margin: 0 !important;
 }
-input:focus {
-  border-color: var(--wm-primary) !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
-  outline: none !important;
-}
-
-/* ---- 主按钮：蓝、块级、圆角（参考 modal 主按钮） ---- */
-.pf-c-button.pf-m-primary,
-input[type="submit"].pf-m-primary,
-#kc-form-buttons input[type="submit"],
-.btn-primary {
-  background: var(--wm-primary) !important;
-  border-color: var(--wm-primary) !important;
-  border-radius: 8px !important;
-  padding: 0.7rem 1rem !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  width: 100% !important;
-  margin-top: 0.5rem !important;
-}
-.pf-c-button.pf-m-primary:hover,
-#kc-form-buttons input[type="submit"]:hover,
-.btn-primary:hover {
-  background: var(--wm-primary-hover) !important;
-  border-color: var(--wm-primary-hover) !important;
-}
-
-/* ---- 重新发送：次要（文字按钮，弱化） ---- */
-.pf-c-button.pf-m-default,
-.btn-default {
+/* 卡片内部容器复位，避免双层框 */
+#kc-content,
+#kc-content-wrapper,
+#kc-form,
+#kc-form-wrapper {
   background: transparent !important;
   border: none !important;
-  color: var(--wm-primary) !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
   box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-/* ---- 报错提示：红色浅底 ---- */
-.pf-c-alert.pf-m-danger,
-.alert-error {
-  background: #fef2f2 !important;
-  color: #b91c1c !important;
-  border-radius: 8px !important;
+/* ---- 品牌头：logo + 标题（都在 #kc-page-title / h1 内） ---- */
+#kc-page-title {
+  text-align: center !important;
+  margin: 0 0 1.5rem !important;
 }
-.pf-c-alert.pf-m-success,
-.alert-success {
-  background: #f0fdf4 !important;
-  color: #15803d !important;
-  border-radius: 8px !important;
+.wm-logo {
+  display: block;
+  height: 30px;
+  width: auto;
+  margin: 0 auto 1.1rem;
 }
+.wm-page-title {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--wm-text);
+  letter-spacing: 0.01em;
+}
+
+/* ---- 副标题（验证码页：已发送至 xxx） ---- */
+.wm-subtitle {
+  text-align: center;
+  color: var(--wm-text-muted);
+  font-size: 13.5px;
+  margin: 0 0 1.4rem;
+}
+.wm-subtitle strong {
+  color: var(--wm-text);
+  font-weight: 600;
+}
+
+/* ---- 填充式输入框（灰底、圆角、focus 白底蓝环，参考抖音） ---- */
+.wm-form { margin: 0; }
+.wm-field {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background: var(--wm-field-bg);
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  height: 52px;
+  padding: 0 14px;
+  margin-bottom: 14px;
+  transition: background .15s, border-color .15s, box-shadow .15s;
+}
+.wm-field:focus-within {
+  background: #fff;
+  border-color: var(--wm-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+.wm-prefix {
+  flex: 0 0 auto;
+  color: #3a3f47;
+  font-size: 15px;
+  font-weight: 500;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 1px solid var(--wm-divider);
+  white-space: nowrap;
+}
+.wm-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--wm-text);
+  padding: 0;
+}
+.wm-input::placeholder { color: var(--wm-text-faint); }
+/* 验证码框内右侧「重新发送」后缀按钮 */
+.wm-suffix-btn {
+  flex: 0 0 auto;
+  border: none;
+  background: transparent;
+  color: var(--wm-primary);
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 12px;
+  margin-left: 4px;
+  border-left: 1px solid var(--wm-divider);
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 68px;
+  text-align: center;
+}
+.wm-suffix-btn:disabled {
+  color: var(--wm-text-faint);
+  cursor: default;
+}
+
+/* ---- 主按钮：品牌蓝、块级、圆角 ---- */
+.wm-btn--primary {
+  display: block;
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: var(--wm-primary);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background .15s, transform .05s;
+}
+.wm-btn--primary:hover { background: var(--wm-primary-hover); }
+.wm-btn--primary:active { transform: translateY(1px); }
+.wm-btn--primary:disabled { background: var(--wm-primary-soft); cursor: default; }
+
+/* ---- 辅助文字 / 链接 / 协议页脚 ---- */
+.wm-helper {
+  text-align: center;
+  font-size: 12.5px;
+  color: #8a9099;
+  margin: 14px 0 0;
+}
+.wm-link {
+  color: var(--wm-primary);
+  text-decoration: none;
+}
+.wm-link:hover { text-decoration: underline; }
+.wm-agreement {
+  text-align: center;
+  font-size: 12px;
+  color: var(--wm-text-faint);
+  line-height: 1.7;
+  margin: 16px 0 0;
+}
+.wm-agreement a {
+  color: var(--wm-primary);
+  text-decoration: none;
+}
+.wm-agreement a:hover { text-decoration: underline; }
+
+/* ---- 提示条：错误红 / 成功绿 ---- */
+.wm-alert {
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.wm-alert--error { background: #fef2f2; color: #c0362c; }
+.wm-alert--success { background: #eefaf1; color: #1a7f43; }
