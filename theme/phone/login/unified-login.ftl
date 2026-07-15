@@ -42,39 +42,25 @@
 
             <div class="wm-col-divider"></div>
 
-            <!-- 右：手机号验证码登录 -->
+            <!-- 右：手机号验证码登录（单页：手机号 + 验证码 + 获取验证码 + 验证登录） -->
             <div class="wm-col wm-col-phone">
                 <div class="wm-col-title">手机号登录</div>
                 <div class="wm-phone-main">
-                    <#if (phoneStep!'input') == 'otp'>
-                        <form id="wm-otp-form" class="wm-form" action="${url.loginAction}" method="post">
-                            <input type="hidden" name="action" value="verify" />
-                            <div class="wm-field">
-                                <input type="text" name="otp" class="wm-input" placeholder="请输入验证码"
-                                       maxlength="8" autofocus autocomplete="one-time-code" inputmode="numeric" />
-                            </div>
-                        </form>
-                        <!-- 验证登录 + 重新发送 + 已发送提示 + 重新输入手机号 作为整体沉底 -->
-                        <div class="wm-otp-actions wm-sink">
-                            <button type="submit" form="wm-otp-form" class="wm-btn wm-btn--primary">验证登录</button>
-                            <form action="${url.loginAction}" method="post" class="wm-resend-form">
-                                <input type="hidden" name="action" value="resend" />
-                                <button type="submit" class="wm-link-btn">重新发送验证码</button>
-                            </form>
-                            <p class="wm-helper wm-otp-sent">验证码已发送至 ${(phone!'')}</p>
-                            <a class="wm-link-btn wm-restart" href="${url.loginRestartFlowUrl}">重新输入手机号</a>
+                    <form id="wm-login-form" class="wm-form" action="${url.loginAction}" method="post"
+                          data-send="${readBase}/api/keycloak-sms/otp/send/">
+                        <div class="wm-field">
+                            <span class="wm-prefix">+86</span>
+                            <input type="tel" id="wm-phone" name="phone" class="wm-input" placeholder="请输入手机号"
+                                   value="${(phone!'')}" autofocus autocomplete="tel" inputmode="numeric" maxlength="11" />
                         </div>
-                    <#else>
-                        <form id="wm-phone-form" class="wm-form" action="${url.loginAction}" method="post">
-                            <div class="wm-field">
-                                <span class="wm-prefix">+86</span>
-                                <input type="tel" name="phone" class="wm-input" placeholder="请输入手机号"
-                                       value="${(phone!'')}" autocomplete="tel" inputmode="numeric" maxlength="11" />
-                            </div>
-                            <!-- 按钮下沉，与左侧二维码框底部对齐 -->
-                            <button type="submit" class="wm-btn wm-btn--primary wm-sink">获取验证码</button>
-                        </form>
-                    </#if>
+                        <div class="wm-field">
+                            <input type="text" id="wm-otp" name="otp" class="wm-input" placeholder="请输入验证码"
+                                   maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
+                            <button type="button" id="wm-send-btn" class="wm-suffix-btn" data-label="获取验证码">获取验证码</button>
+                        </div>
+                        <p id="wm-send-hint" class="wm-send-hint"></p>
+                        <button type="submit" class="wm-btn wm-btn--primary wm-sink">验证登录</button>
+                    </form>
                 </div>
                 <p class="wm-agreement">
                     登录即代表同意
@@ -84,6 +70,8 @@
                 </p>
             </div>
         </div>
+
+        <script src="${url.resourcesPath}/js/unified-otp.js"></script>
 
     </#if>
 

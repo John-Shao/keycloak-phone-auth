@@ -288,8 +288,10 @@ body.login-pf,
  * main 高度自然 ≈ 左侧二维码框高度（上有标题、下有协议对齐左栏 hint），
  * 故「按钮/控件组下沉到 main 底」即与二维码框底部对齐。 */
 .wm-phone-main { flex: 1 1 auto; display: flex; flex-direction: column; width: 100%; }
-#wm-phone-form { display: flex; flex-direction: column; flex: 1 1 auto; }
+#wm-login-form { display: flex; flex-direction: column; flex: 1 1 auto; }
 .wm-sink { margin-top: auto; }
+.wm-send-hint { font-size: 12px; color: var(--wm-text-muted); margin: -6px 0 0; min-height: 16px; }
+.wm-send-hint--err { color: #c0362c; }
 .wm-otp-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 .wm-otp-actions .wm-btn--primary { margin-top: 0; }
 .wm-resend-form { margin: 0; }

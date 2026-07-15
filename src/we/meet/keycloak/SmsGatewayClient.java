@@ -1,9 +1,12 @@
 package we.meet.keycloak;
 
+import org.keycloak.util.JsonSerialization;
+
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -65,9 +68,64 @@ public class SmsGatewayClient {
         }
     }
 
+    /** 后端 otp/verify 的结果（transport 失败返回 null）。 */
+    public static class OtpVerify {
+        public boolean valid;
+        public String error;
+    }
+
+    /**
+     * 调后端校验验证码（单页手机登录，KC 服务端→后端 shared-bearer）。
+     *   POST {baseUrl}/api/keycloak-sms/otp/verify/  {"phone","otp"}  Bearer <token>
+     *   → {"valid": bool, "error": str}
+     * transport/HTTP 失败返回 null；否则返回 OtpVerify。
+     */
+    public static OtpVerify verifyOtp(String baseUrl, String token, String phone, String otp) {
+        if (baseUrl == null || baseUrl.isBlank()) {
+            LOG.severe("UnifiedAuth: backend_base_url is not configured");
+            return null;
+        }
+        String body = "{\"phone\":\"" + escape(phone) + "\",\"otp\":\"" + escape(otp) + "\"}";
+        byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
+        try {
+            String url = trimSlash(baseUrl) + "/api/keycloak-sms/otp/verify/";
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(TIMEOUT_MS);
+            conn.setReadTimeout(TIMEOUT_MS);
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            conn.setRequestProperty("Content-Length", Integer.toString(bodyBytes.length));
+            if (token != null && !token.isBlank()) {
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+            }
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(bodyBytes);
+            }
+            int status = conn.getResponseCode();
+            if (status < 200 || status >= 300) {
+                LOG.warning("UnifiedAuth: otp/verify HTTP " + status);
+                return null;
+            }
+            Map<String, Object> data = JsonSerialization.readValue(conn.getInputStream(), Map.class);
+            OtpVerify r = new OtpVerify();
+            r.valid = Boolean.TRUE.equals(data.get("valid"));
+            Object e = data.get("error");
+            r.error = e != null ? e.toString() : null;
+            return r;
+        } catch (Exception ex) {
+            LOG.severe("UnifiedAuth: otp/verify call failed: " + ex.getMessage());
+            return null;
+        }
+    }
+
     /** Minimal JSON string escaping (backslash, double-quote, control chars). */
     private static String escape(String s) {
         if (s == null) return "";
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private static String trimSlash(String s) {
+        return s.endsWith("/") ? s.substring(0, s.length() - 1) : s;
     }
 }
