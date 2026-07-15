@@ -210,3 +210,36 @@ body.login-pf,
 }
 .wm-alert--error { background: #fef2f2; color: #c0362c; }
 .wm-alert--success { background: #eefaf1; color: #1a7f43; }
+
+/* ---- 扫码登录页 ---- */
+.wm-scan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.wm-qr-box {
+  position: relative;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid var(--wm-divider);
+  border-radius: 14px;
+  line-height: 0;
+}
+.wm-qr { display: block; width: 240px; height: 240px; }
+.wm-qr-overlay {
+  position: absolute;
+  inset: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+.wm-qr-ok { color: var(--wm-primary); font-size: 18px; font-weight: 600; }
+.wm-qr-sub { color: var(--wm-text-muted); font-size: 13px; }
+.wm-try-another { text-align: center; margin: 16px 0 0; }
+.wm-try-another a { color: var(--wm-primary); font-size: 13px; text-decoration: none; }
+.wm-try-another a:hover { text-decoration: underline; }
