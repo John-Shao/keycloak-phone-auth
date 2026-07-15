@@ -7,16 +7,6 @@
 
     <#elseif section = "form">
 
-        <#if realm.internationalizationEnabled && locale?? && (locale.supported?size gt 1)>
-            <div class="wm-locale">
-                <select id="wm-locale-select" class="wm-locale-select" aria-label="Language">
-                    <#list locale.supported as l>
-                        <option value="${l.languageTag}"<#if l.languageTag == locale.currentLanguageTag> selected</#if>>${l.label}</option>
-                    </#list>
-                </select>
-            </div>
-        </#if>
-
         <#if message?has_content && message.type = "error">
             <div class="wm-alert wm-alert--error">${kcSanitize(message.summary)?no_esc}</div>
         </#if>
@@ -88,20 +78,6 @@
         </div>
 
         <script src="${url.resourcesPath}/js/unified-otp.js"></script>
-        <script>
-        // 语言切换：写 KEYCLOAK_LOCALE cookie + 原样 GET 重载当前 URL（不走 KC 的
-        // client_data 重启链，避开自定义 authenticator 下 redirect_uri 校验 400）。
-        (function () {
-            var s = document.getElementById("wm-locale-select");
-            if (!s) return;
-            s.addEventListener("change", function () {
-                document.cookie = "KEYCLOAK_LOCALE=" + encodeURIComponent(s.value) +
-                    ";path=/;max-age=2592000;samesite=lax";
-                // 用 assign(pathname+search) 强制 GET，避免 reload() 在 POST 重渲染页重放表单
-                window.location.assign(window.location.pathname + window.location.search);
-            });
-        })();
-        </script>
 
     </#if>
 
