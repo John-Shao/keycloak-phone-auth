@@ -1,2 +1,3 @@
 we.meet.keycloak.PhoneAuthenticatorFactory
 we.meet.keycloak.ScanAuthenticatorFactory
+we.meet.keycloak.UnifiedLoginAuthenticatorFactory

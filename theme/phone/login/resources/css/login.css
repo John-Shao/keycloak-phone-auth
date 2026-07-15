@@ -243,3 +243,43 @@ body.login-pf,
 .wm-try-another { text-align: center; margin: 16px 0 0; }
 .wm-try-another a { color: var(--wm-primary); font-size: 13px; text-decoration: none; }
 .wm-try-another a:hover { text-decoration: underline; }
+
+/* ---- 阶段二 双栏登录页（扫码 + 手机号） ---- */
+.card-pf:has(.wm-dual) { max-width: 600px !important; }
+.wm-dual {
+  display: flex;
+  align-items: stretch;
+  margin-top: 4px;
+}
+.wm-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 18px;
+}
+.wm-col-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--wm-text);
+  margin-bottom: 16px;
+}
+.wm-col-divider { width: 1px; background: var(--wm-divider); align-self: stretch; margin: 8px 0; }
+.wm-col-phone .wm-form { width: 100%; }
+.wm-dual .wm-qr { width: 200px; height: 200px; }
+.wm-resend-row { text-align: center; margin-top: 10px; }
+.wm-link-btn {
+  border: none;
+  background: transparent;
+  color: var(--wm-primary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+.wm-link-btn:hover { text-decoration: underline; }
+/* 窄屏堆叠 */
+@media (max-width: 520px) {
+  .wm-dual { flex-direction: column; }
+  .wm-col-divider { width: auto; height: 1px; align-self: auto; margin: 20px 24px; }
+}

@@ -31,7 +31,9 @@ RUN mkdir -p classes/META-INF/services && \
         src/we/meet/keycloak/SmsGatewayClient.java \
         src/we/meet/keycloak/ScanAuthenticator.java \
         src/we/meet/keycloak/ScanAuthenticatorFactory.java \
-        src/we/meet/keycloak/ScanGatewayClient.java && \
+        src/we/meet/keycloak/ScanGatewayClient.java \
+        src/we/meet/keycloak/UnifiedLoginAuthenticator.java \
+        src/we/meet/keycloak/UnifiedLoginAuthenticatorFactory.java && \
     cp -r META-INF/. classes/META-INF/ && \
     jar cf phone-auth.jar -C classes .
 
