@@ -245,7 +245,7 @@ body.login-pf,
 .wm-try-another a:hover { text-decoration: underline; }
 
 /* ---- 阶段二 双栏登录页（扫码 + 手机号） ---- */
-.card-pf:has(.wm-dual) { max-width: 600px !important; }
+.card-pf:has(.wm-dual) { max-width: 700px !important; }
 .wm-dual {
   display: flex;
   align-items: stretch;
@@ -257,7 +257,7 @@ body.login-pf,
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 18px;
+  padding: 0 16px;
 }
 .wm-col-title {
   font-size: 15px;
@@ -290,7 +290,7 @@ body.login-pf,
 .wm-phone-main { flex: 1 1 auto; display: flex; flex-direction: column; width: 100%; }
 #wm-phone-form { display: flex; flex-direction: column; flex: 1 1 auto; }
 .wm-sink { margin-top: auto; }
-.wm-otp-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.wm-otp-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 .wm-otp-actions .wm-btn--primary { margin-top: 0; }
 .wm-resend-form { margin: 0; }
 .wm-otp-sent { margin: 2px 0 0; }
