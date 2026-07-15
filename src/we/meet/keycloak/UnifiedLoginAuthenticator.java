@@ -76,7 +76,7 @@ public class UnifiedLoginAuthenticator implements Authenticator {
             return;
         }
         if (otp == null) {
-            ctx.challenge(renderPage(ctx, phone, "请先输入验证码"));
+            ctx.challenge(renderPage(ctx, phone, "otpRequired"));
             return;
         }
 
@@ -86,11 +86,18 @@ public class UnifiedLoginAuthenticator implements Authenticator {
                 phone, otp);
 
         if (r == null) {
-            ctx.challenge(renderPage(ctx, phone, "服务暂时不可用，请稍后重试"));
+            ctx.challenge(renderPage(ctx, phone, "serviceUnavailable"));
             return;
         }
         if (!r.valid) {
-            ctx.challenge(renderPage(ctx, phone, r.error != null ? r.error : "验证码错误"));
+            // reason 码 → message key，由 Keycloak 按登录页语言渲染
+            String key;
+            Object[] args = new Object[0];
+            if ("wrong".equals(r.reason)) { key = "otp.wrong"; args = new Object[]{ r.remaining }; }
+            else if ("locked".equals(r.reason)) { key = "otp.locked"; }
+            else if ("phone".equals(r.reason)) { key = "phone.invalid"; }
+            else { key = "otp.expired"; }
+            ctx.challenge(renderPage(ctx, phone, key, args));
             return;
         }
 
@@ -150,7 +157,7 @@ public class UnifiedLoginAuthenticator implements Authenticator {
     // 渲染（双栏页）
     // -------------------------------------------------------------------------
 
-    private Response renderPage(AuthenticationFlowContext ctx, String phone, String errKey) {
+    private Response renderPage(AuthenticationFlowContext ctx, String phone, String errKey, Object... args) {
         String qrToken = ctx.getAuthenticationSession().getAuthNote(NOTE_QR_TOKEN);
         var form = ctx.form().setAttribute("readBase", strCfg(ctx, "backend_base_url", ""));
         if (qrToken != null) {
@@ -158,9 +165,8 @@ public class UnifiedLoginAuthenticator implements Authenticator {
                        .setAttribute("qrToken", qrToken);
         }
         if (phone != null) form = form.setAttribute("phone", phone);
-        // errKey 可以是 message key（如 phone.invalid）或后端回来的原文——未命中 key
-        // 的字符串 Keycloak 直接按字面渲染，两种都可用。
-        if (errKey != null) form = form.setError(errKey);
+        // errKey 为 message key，由 Keycloak 按登录页 locale 渲染（args 供 {0} 占位）
+        if (errKey != null) form = form.setError(errKey, args);
         return form.createForm("unified-login.ftl");
     }
 

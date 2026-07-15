@@ -3,7 +3,7 @@
 
     <#if section = "header">
         <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg" alt="we-meet" />
-        <span class="wm-page-title">输入验证码</span>
+        <span class="wm-page-title">${msg("otpTitle")}</span>
 
     <#elseif section = "form">
 
@@ -13,10 +13,10 @@
         <#else>
             <#assign shownPhone = p>
         </#if>
-        <p class="wm-subtitle">验证码已发送至 <strong>+86 ${shownPhone}</strong></p>
+        <p class="wm-subtitle">${msg("otpSentTo")} <strong>+86 ${shownPhone}</strong></p>
 
         <#if resent?? && resent>
-            <div class="wm-alert wm-alert--success">验证码已重新发送</div>
+            <div class="wm-alert wm-alert--success">${msg("otpResent")}</div>
         </#if>
         <#if message?has_content && message.type = "error">
             <div class="wm-alert wm-alert--error">${kcSanitize(message.summary)?no_esc}</div>
@@ -35,7 +35,7 @@
                        id="otp"
                        name="otp"
                        class="wm-input"
-                       placeholder="请输入验证码"
+                       placeholder="${msg('otpPlaceholder')}"
                        maxlength="8"
                        autofocus
                        autocomplete="one-time-code"
@@ -44,14 +44,14 @@
                         form="wm-resend-form"
                         id="wm-resend-btn"
                         class="wm-suffix-btn"
-                        data-label="重新发送">重新发送</button>
+                        data-label="${msg('doResend')}">${msg("doResend")}</button>
             </div>
 
-            <button type="submit" class="wm-btn wm-btn--primary">验证登录</button>
+            <button type="submit" class="wm-btn wm-btn--primary">${msg("doVerify")}</button>
         </form>
 
         <p class="wm-helper">
-            <a class="wm-link" href="${url.loginRestartFlowUrl}">‹ 重新输入手机号</a>
+            <a class="wm-link" href="${url.loginRestartFlowUrl}">‹ ${msg("reenterPhone")}</a>
         </p>
 
         <script src="${url.resourcesPath}/js/otp-countdown.js"></script>

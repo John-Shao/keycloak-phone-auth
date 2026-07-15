@@ -68,10 +68,11 @@ public class SmsGatewayClient {
         }
     }
 
-    /** 后端 otp/verify 的结果（transport 失败返回 null）。 */
+    /** 后端 otp/verify 的结果（transport 失败返回 null）。reason: expired/locked/wrong/phone/null。 */
     public static class OtpVerify {
         public boolean valid;
-        public String error;
+        public String reason;
+        public Integer remaining;
     }
 
     /**
@@ -110,8 +111,10 @@ public class SmsGatewayClient {
             Map<String, Object> data = JsonSerialization.readValue(conn.getInputStream(), Map.class);
             OtpVerify r = new OtpVerify();
             r.valid = Boolean.TRUE.equals(data.get("valid"));
-            Object e = data.get("error");
-            r.error = e != null ? e.toString() : null;
+            Object rs = data.get("reason");
+            r.reason = rs != null ? rs.toString() : null;
+            Object rm = data.get("remaining");
+            if (rm instanceof Number n) r.remaining = n.intValue();
             return r;
         } catch (Exception ex) {
             LOG.severe("UnifiedAuth: otp/verify call failed: " + ex.getMessage());

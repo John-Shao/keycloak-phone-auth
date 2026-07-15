@@ -3,7 +3,7 @@
 
     <#if section = "header">
         <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg" alt="we-meet" />
-        <span class="wm-page-title">手机号登录</span>
+        <span class="wm-page-title">${msg("phoneTitle")}</span>
 
     <#elseif section = "form">
 
@@ -19,23 +19,23 @@
                        name="phone"
                        class="wm-input"
                        value="${(phone!'')}"
-                       placeholder="请输入手机号"
+                       placeholder="${msg('phonePlaceholder')}"
                        autofocus
                        autocomplete="tel"
                        inputmode="numeric"
                        maxlength="11" />
             </div>
 
-            <button type="submit" class="wm-btn wm-btn--primary">获取验证码</button>
+            <button type="submit" class="wm-btn wm-btn--primary">${msg("doGetVerificationCode")}</button>
         </form>
 
-        <p class="wm-helper">未注册的手机号将自动创建 we-meet 账号</p>
+        <p class="wm-helper">${msg("autoRegisterHint")}</p>
 
         <p class="wm-agreement">
-            登录即代表同意
-            <a href="https://meet.we-meet.online/conditions-utilisation" target="_blank" rel="noopener">《用户协议》</a>
-            和
-            <a href="https://meet.we-meet.online/mentions-legales" target="_blank" rel="noopener">《隐私政策》</a>
+            ${msg("agreePre")}
+            <a href="https://meet.we-meet.online/conditions-utilisation" target="_blank" rel="noopener">${msg("termsLink")}</a>
+            ${msg("agreeAnd")}
+            <a href="https://meet.we-meet.online/mentions-legales" target="_blank" rel="noopener">${msg("privacyLink")}</a>
         </p>
 
     </#if>
