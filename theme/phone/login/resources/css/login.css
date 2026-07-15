@@ -283,3 +283,18 @@ body.login-pf,
   .wm-dual { flex-direction: column; }
   .wm-col-divider { width: auto; height: 1px; align-self: auto; margin: 20px 24px; }
 }
+
+/* 右栏布局：main 区撑满整栏高度、交互控件下沉、协议沉到右栏底。
+ * main 高度自然 ≈ 左侧二维码框高度（上有标题、下有协议对齐左栏 hint），
+ * 故「按钮/控件组下沉到 main 底」即与二维码框底部对齐。 */
+.wm-phone-main { flex: 1 1 auto; display: flex; flex-direction: column; width: 100%; }
+#wm-phone-form { display: flex; flex-direction: column; flex: 1 1 auto; }
+.wm-sink { margin-top: auto; }
+.wm-otp-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.wm-otp-actions .wm-btn--primary { margin-top: 0; }
+.wm-resend-form { margin: 0; }
+.wm-otp-sent { margin: 2px 0 0; }
+.wm-col-phone > .wm-agreement { width: 100%; margin: 14px 0 0; }
+/* 隐藏 Keycloak 默认「已尝试用户名 + Restart login」chrome：去掉顶部手机号 +
+ * 英文 Restart（改由右栏内中文「重新输入手机号」链接承担）。 */
+#kc-username { display: none !important; }

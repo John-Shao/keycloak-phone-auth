@@ -45,39 +45,45 @@
             <!-- 右：手机号验证码登录 -->
             <div class="wm-col wm-col-phone">
                 <div class="wm-col-title">手机号登录</div>
-                <#if (phoneStep!'input') == 'otp'>
-                    <form id="wm-otp-form" class="wm-form" action="${url.loginAction}" method="post">
-                        <input type="hidden" name="action" value="verify" />
-                        <div class="wm-field">
-                            <input type="text" name="otp" class="wm-input" placeholder="请输入验证码"
-                                   maxlength="8" autofocus autocomplete="one-time-code" inputmode="numeric" />
+                <div class="wm-phone-main">
+                    <#if (phoneStep!'input') == 'otp'>
+                        <form id="wm-otp-form" class="wm-form" action="${url.loginAction}" method="post">
+                            <input type="hidden" name="action" value="verify" />
+                            <div class="wm-field">
+                                <input type="text" name="otp" class="wm-input" placeholder="请输入验证码"
+                                       maxlength="8" autofocus autocomplete="one-time-code" inputmode="numeric" />
+                            </div>
+                        </form>
+                        <!-- 验证登录 + 重新发送 + 已发送提示 + 重新输入手机号 作为整体沉底 -->
+                        <div class="wm-otp-actions wm-sink">
+                            <button type="submit" form="wm-otp-form" class="wm-btn wm-btn--primary">验证登录</button>
+                            <form action="${url.loginAction}" method="post" class="wm-resend-form">
+                                <input type="hidden" name="action" value="resend" />
+                                <button type="submit" class="wm-link-btn">重新发送验证码</button>
+                            </form>
+                            <p class="wm-helper wm-otp-sent">验证码已发送至 ${(phone!'')}</p>
+                            <a class="wm-link-btn wm-restart" href="${url.loginRestartFlowUrl}">重新输入手机号</a>
                         </div>
-                        <button type="submit" class="wm-btn wm-btn--primary">验证登录</button>
-                    </form>
-                    <form action="${url.loginAction}" method="post" class="wm-resend-row">
-                        <input type="hidden" name="action" value="resend" />
-                        <button type="submit" class="wm-link-btn">重新发送验证码</button>
-                    </form>
-                    <p class="wm-helper">验证码已发送至 ${(phone!'')}</p>
-                <#else>
-                    <form id="wm-phone-form" class="wm-form" action="${url.loginAction}" method="post">
-                        <div class="wm-field">
-                            <span class="wm-prefix">+86</span>
-                            <input type="tel" name="phone" class="wm-input" placeholder="请输入手机号"
-                                   value="${(phone!'')}" autocomplete="tel" inputmode="numeric" maxlength="11" />
-                        </div>
-                        <button type="submit" class="wm-btn wm-btn--primary">获取验证码</button>
-                    </form>
-                </#if>
+                    <#else>
+                        <form id="wm-phone-form" class="wm-form" action="${url.loginAction}" method="post">
+                            <div class="wm-field">
+                                <span class="wm-prefix">+86</span>
+                                <input type="tel" name="phone" class="wm-input" placeholder="请输入手机号"
+                                       value="${(phone!'')}" autocomplete="tel" inputmode="numeric" maxlength="11" />
+                            </div>
+                            <!-- 按钮下沉，与左侧二维码框底部对齐 -->
+                            <button type="submit" class="wm-btn wm-btn--primary wm-sink">获取验证码</button>
+                        </form>
+                    </#if>
+                </div>
+                <p class="wm-agreement">
+                    登录即代表同意
+                    <a href="https://meet.we-meet.online/conditions-utilisation" target="_blank" rel="noopener">《用户协议》</a>
+                    和
+                    <a href="https://meet.we-meet.online/mentions-legales" target="_blank" rel="noopener">《隐私政策》</a>
+                </p>
             </div>
         </div>
-
-        <p class="wm-agreement">
-            登录即代表同意
-            <a href="https://meet.we-meet.online/conditions-utilisation" target="_blank" rel="noopener">《用户协议》</a>
-            和
-            <a href="https://meet.we-meet.online/mentions-legales" target="_blank" rel="noopener">《隐私政策》</a>
-        </p>
 
     </#if>
 
