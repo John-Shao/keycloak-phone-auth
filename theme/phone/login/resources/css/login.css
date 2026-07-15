@@ -300,3 +300,28 @@ body.login-pf,
 /* 隐藏 Keycloak 默认「已尝试用户名 + Restart login」chrome：去掉顶部手机号 +
  * 英文 Restart（改由右栏内中文「重新输入手机号」链接承担）。 */
 #kc-username { display: none !important; }
+
+/* ---- 语言切换器 ----
+ * 父主题自带的 #kc-locale 切换器在自定义 authenticator 下会 400：它生成的是
+ * client_data 重启链（丢掉 redirect_uri/scope/response_type），KC 重启路径重新
+ * 校验 redirect_uri 直接拒（无效的参数 : redirect_uri）。故隐藏它，改用下方
+ * .wm-locale 自有切换器——仅写 KEYCLOAK_LOCALE cookie + 原样 GET 重载当前 URL，
+ * 参数一个不丢，KC 按 cookie 渲染新语言。 */
+#kc-locale { display: none !important; }
+
+.wm-locale { display: flex; justify-content: flex-end; margin: -6px 0 10px; }
+.wm-locale-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--wm-divider);
+  border-radius: 8px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  padding: 5px 28px 5px 10px;
+  font-size: 12.5px;
+  color: var(--wm-text-muted);
+  cursor: pointer;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.wm-locale-select:hover { border-color: var(--wm-text-faint); }
+.wm-locale-select:focus { border-color: var(--wm-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
