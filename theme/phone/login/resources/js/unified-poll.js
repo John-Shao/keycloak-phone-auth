@@ -8,6 +8,12 @@
 (function () {
   var box = document.getElementById('wm-scan');
   if (!box) return;
+  // 触摸设备上扫码列被 CSS 隐藏（扫自己屏幕没意义，见 login.css），此处同条件
+  // 退出，别每 2.5s 空轮询一次 ready 端点。
+  if (window.matchMedia &&
+      window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+    return;
+  }
   var readyUrl = box.getAttribute('data-ready');
   var interval = parseInt(box.getAttribute('data-interval') || '2500', 10);
   var overlay = document.getElementById('wm-scan-overlay');

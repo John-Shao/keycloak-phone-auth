@@ -284,6 +284,15 @@ body.login-pf,
   .wm-col-divider { width: auto; height: 1px; align-self: auto; margin: 20px 24px; }
 }
 
+/* ---- 触摸设备：隐藏扫码列，只留手机号登录 ----
+ * 手机上（App 内嵌 WebView、手机浏览器）扫自己屏幕上的二维码没有意义。
+ * 判据用 hover/pointer 而非宽度：桌面把窗口拖窄时二维码仍然有用（用手机扫），
+ * 只有「无悬停 + 粗指针」才是真触摸设备。unified-poll.js 同条件跳过轮询。 */
+@media (hover: none) and (pointer: coarse) {
+  .wm-col-scan,
+  .wm-col-divider { display: none; }
+}
+
 /* 右栏布局：main 区撑满整栏高度、交互控件下沉、协议沉到右栏底。
  * main 高度自然 ≈ 左侧二维码框高度（上有标题、下有协议对齐左栏 hint），
  * 故「按钮/控件组下沉到 main 底」即与二维码框底部对齐。 */
