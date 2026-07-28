@@ -358,9 +358,6 @@ body.login-pf,
     padding-right: calc(env(safe-area-inset-right, 0px) + 24px) !important;
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
     padding-left: calc(env(safe-area-inset-left, 0px) + 24px) !important;
-    /* flex 链的第一环 —— 少了它下面那串 flex:1 全是空转，协议行沉不到底 */
-    display: flex;
-    flex-direction: column;
   }
   /* 标题外面还包着 PatternFly 的 header，它自带下边距，会和标题的
    * margin-bottom 叠加成一段过宽的空白。间距只由 #kc-page-title 说了算。 */
@@ -370,24 +367,7 @@ body.login-pf,
     flex: 0 0 auto;
   }
 
-  /* 竖向 flex 链：让协议行能沉到页面底。桌面靠 .wm-sink 把控件下沉对齐二维
-   * 码框底，单列全屏下改由协议 margin-top:auto 吃掉屏幕下半的空白，按钮则
-   * 紧跟表单走自然流。链上任一环没匹配只会退回「协议紧跟按钮」，不会坏版。 */
-  #kc-content,
-  #kc-content-wrapper,
-  #kc-form,
-  #kc-form-wrapper,
-  .wm-dual,
-  .wm-col-phone,
-  .wm-phone-main {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    flex: 1 1 auto;
-    min-height: 0;
-    width: 100%;
-  }
-  /* 表单本身不参与撑高，否则 flex:1 会把按钮推到屏幕底 */
+  /* 表单本身不撑高，走自然流：按钮紧跟验证码框 */
   #wm-login-form { flex: 0 0 auto; }
 
   /* 品牌头：外来 wordmark 收起（App 内已有品牌语境），标题改原生大标题、左对齐 */
@@ -433,12 +413,19 @@ body.login-pf,
   /* 桌面右栏靠「下沉」与左侧二维码框底对齐；单列全屏下不能下沉，否则按钮被
    * 甩到屏幕底、中间留一段莫名其妙的空白。改成紧跟表单。 */
   .wm-sink { margin-top: 24px; }
-  /* 空白由协议行吃掉：沉到页面底，屏幕下半不再是一整片白 */
+  /* 协议行钉到屏幕底，吃掉屏幕下半那片空白。
+   * 用 position:fixed 而不是 margin-top:auto —— 后者要 .card-pf → #kc-content
+   * → #kc-content-wrapper → .wm-dual → .wm-col-phone → .wm-phone-main 六层
+   * 祖先全部配合成竖向 flex 才成立，桌面 Chrome 上量着是对的，真机 WebView
+   * 上没走通(2026-07-28 实测)。fixed 直接对视口定位，不依赖任何祖先。 */
   .wm-col-phone > .wm-agreement {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+    margin: 0;
+    padding: 0 24px;
     font-size: 13px;
-    margin: auto 0 0;
-    padding-top: 24px;
-    flex: 0 0 auto;
   }
 
   /* 去掉 Web 交互痕迹：点按灰高亮块、静态文案可长按选中 */
@@ -456,6 +443,15 @@ body.login-pf,
   .wm-input {
     -webkit-user-select: text;
     user-select: text;
+  }
+}
+
+/* 键盘弹起后可视区被压扁，钉在底部的协议行会怼到表单上，收回自然流。 */
+@media (hover: none) and (pointer: coarse) and (max-height: 560px) {
+  .wm-col-phone > .wm-agreement {
+    position: static;
+    margin: 24px 0 0;
+    padding: 0;
   }
 }
 
