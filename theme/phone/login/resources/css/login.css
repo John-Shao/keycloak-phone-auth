@@ -349,18 +349,53 @@ body.login-pf,
     box-sizing: border-box;
     border-radius: 0 !important;
     box-shadow: none !important;
-    padding:
-      calc(env(safe-area-inset-top, 0px) + 8vh)
-      calc(env(safe-area-inset-right, 0px) + 24px)
-      calc(env(safe-area-inset-bottom, 0px) + 24px)
-      calc(env(safe-area-inset-left, 0px) + 24px) !important;
+    /* 兜底值先写死：`env()` 只要有一点解析出入，整条 padding 声明就会被整体
+     * 丢弃，合并成一条写就连兜底都没了（实测顶部因此几乎贴到状态栏）。分成
+     * 「固定值 + 带 env 的覆盖」两组做渐进增强，后者失效也还剩前者。
+     * 顶部留白不用 vh：键盘弹起视口一缩，vh 跟着塌，标题会被顶到状态栏下。 */
+    padding: 48px 24px 24px !important;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+    padding-right: calc(env(safe-area-inset-right, 0px) + 24px) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
+    padding-left: calc(env(safe-area-inset-left, 0px) + 24px) !important;
+    /* flex 链的第一环 —— 少了它下面那串 flex:1 全是空转，协议行沉不到底 */
+    display: flex;
+    flex-direction: column;
   }
+  /* 标题外面还包着 PatternFly 的 header，它自带下边距，会和标题的
+   * margin-bottom 叠加成一段过宽的空白。间距只由 #kc-page-title 说了算。 */
+  .login-pf-header {
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto;
+  }
+
+  /* 竖向 flex 链：让协议行能沉到页面底。桌面靠 .wm-sink 把控件下沉对齐二维
+   * 码框底，单列全屏下改由协议 margin-top:auto 吃掉屏幕下半的空白，按钮则
+   * 紧跟表单走自然流。链上任一环没匹配只会退回「协议紧跟按钮」，不会坏版。 */
+  #kc-content,
+  #kc-content-wrapper,
+  #kc-form,
+  #kc-form-wrapper,
+  .wm-dual,
+  .wm-col-phone,
+  .wm-phone-main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+  /* 表单本身不参与撑高，否则 flex:1 会把按钮推到屏幕底 */
+  #wm-login-form { flex: 0 0 auto; }
 
   /* 品牌头：外来 wordmark 收起（App 内已有品牌语境），标题改原生大标题、左对齐 */
   .wm-logo { display: none; }
   #kc-page-title {
     text-align: left !important;
-    margin: 0 0 2rem !important;
+    margin: 0 0 28px !important;
+    flex: 0 0 auto;
   }
   .wm-page-title { font-size: 26px; line-height: 1.35; }
   /* 单列之后「手机号登录」与大标题重复，是双栏时代的列标题遗留 */
@@ -385,7 +420,9 @@ body.login-pf,
     padding-left: 8px;
     margin-left: 0;
   }
-  .wm-send-hint { font-size: 13px; min-height: 18px; }
+  /* 没有提示时不占位 —— 桌面留的 16px 空行在手机上把按钮又推远一截 */
+  .wm-send-hint { font-size: 13px; min-height: 0; margin: 0; }
+  .wm-send-hint:not(:empty) { margin: 2px 0 0; }
 
   /* 主按钮对齐 App 原生胶囊（LoginScreen 的 RoundedCornerShape(26.dp)） */
   .wm-btn--primary {
@@ -393,10 +430,16 @@ body.login-pf,
     border-radius: 999px;
     font-size: 17px;
   }
-  /* 桌面右栏靠「下沉」与左侧二维码框底对齐；单列全屏下会把按钮甩到屏幕底、
-   * 中间留一段莫名其妙的空白，故手机上收回自然流。 */
-  .wm-sink { margin-top: 20px; }
-  .wm-col-phone > .wm-agreement { font-size: 13px; margin: 20px 0 0; }
+  /* 桌面右栏靠「下沉」与左侧二维码框底对齐；单列全屏下不能下沉，否则按钮被
+   * 甩到屏幕底、中间留一段莫名其妙的空白。改成紧跟表单。 */
+  .wm-sink { margin-top: 24px; }
+  /* 空白由协议行吃掉：沉到页面底，屏幕下半不再是一整片白 */
+  .wm-col-phone > .wm-agreement {
+    font-size: 13px;
+    margin: auto 0 0;
+    padding-top: 24px;
+    flex: 0 0 auto;
+  }
 
   /* 去掉 Web 交互痕迹：点按灰高亮块、静态文案可长按选中 */
   html { -webkit-tap-highlight-color: transparent; }
