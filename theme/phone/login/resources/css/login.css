@@ -316,3 +316,160 @@ body.login-pf,
  * 在自定义 authenticator 下点击会 400（其 client_data 重启链丢 redirect_uri，
  * KC 重启路径校验直接拒），故直接隐藏。 */
 #kc-locale { display: none !important; }
+
+/* ---- 手机端：全屏原生皮肤（App 内嵌 WebView / 手机浏览器）----------------
+ * 上面隐藏扫码列后剩下的单列表单，如果继续沿用桌面那套「渐变灰底 + 浮起白
+ * 卡片 + 380px 上限」，在 App 里就是一眼网页：卡片竖直居中、下方一大片灰、
+ * 排版尺度按鼠标算。这里把同一份 DOM 重排成安卓登录页的构图 —— 满屏纯底、
+ * 内容顶部左对齐、大标题、手指尺度的控件、胶囊主按钮。
+ *
+ * 判据沿用上面的「真触摸设备」(hover:none + pointer:coarse)，桌面 Web 端
+ * 一条规则都不受影响；全部规则只在本块内新增，上面的桌面样式原样保留。 */
+@media (hover: none) and (pointer: coarse) {
+  html, body,
+  body.login-pf,
+  .login-pf body {
+    background: #fff !important;
+  }
+  /* 顶部对齐：居中是桌面 modal 的构图，手机上会在下方留出大片死区 */
+  .login-pf-page {
+    justify-content: flex-start !important;
+    padding: 0 !important;
+  }
+
+  /* 卡片 → 页面本体：去阴影、去圆角、去宽度上限，四周吃满安全区 */
+  .card-pf,
+  .login-pf-page .card-pf,
+  .card-pf:has(.wm-dual) {
+    max-width: none !important;
+    width: 100% !important;
+    min-height: 100vh;
+    /* 不假设父主题 bootstrap 的全局 border-box：否则 100vh + padding 会把
+     * 页面撑出一条无意义的滚动。 */
+    box-sizing: border-box;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 8vh)
+      calc(env(safe-area-inset-right, 0px) + 24px)
+      calc(env(safe-area-inset-bottom, 0px) + 24px)
+      calc(env(safe-area-inset-left, 0px) + 24px) !important;
+  }
+
+  /* 品牌头：外来 wordmark 收起（App 内已有品牌语境），标题改原生大标题、左对齐 */
+  .wm-logo { display: none; }
+  #kc-page-title {
+    text-align: left !important;
+    margin: 0 0 2rem !important;
+  }
+  .wm-page-title { font-size: 26px; line-height: 1.35; }
+  /* 单列之后「手机号登录」与大标题重复，是双栏时代的列标题遗留 */
+  .wm-col-title { display: none; }
+
+  .wm-dual { margin-top: 0; }
+  .wm-col { padding: 0; }
+
+  /* 控件放大到手指尺度（桌面 52/48px + 15px 字在手机上偏小） */
+  .wm-field {
+    height: 56px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    padding: 0 16px;
+  }
+  .wm-input,
+  .wm-prefix { font-size: 17px; }
+  /* 验证码框里的竖分隔线是「Web 表单」观感的主要来源之一 */
+  .wm-suffix-btn {
+    border-left: none;
+    font-size: 15px;
+    padding-left: 8px;
+    margin-left: 0;
+  }
+  .wm-send-hint { font-size: 13px; min-height: 18px; }
+
+  /* 主按钮对齐 App 原生胶囊（LoginScreen 的 RoundedCornerShape(26.dp)） */
+  .wm-btn--primary {
+    height: 52px;
+    border-radius: 999px;
+    font-size: 17px;
+  }
+  /* 桌面右栏靠「下沉」与左侧二维码框底对齐；单列全屏下会把按钮甩到屏幕底、
+   * 中间留一段莫名其妙的空白，故手机上收回自然流。 */
+  .wm-sink { margin-top: 20px; }
+  .wm-col-phone > .wm-agreement { font-size: 13px; margin: 20px 0 0; }
+
+  /* 去掉 Web 交互痕迹：点按灰高亮块、静态文案可长按选中 */
+  html { -webkit-tap-highlight-color: transparent; }
+  body,
+  .wm-page-title,
+  .wm-btn--primary,
+  .wm-suffix-btn,
+  .wm-agreement,
+  .wm-helper,
+  .wm-alert {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .wm-input {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/* ---- 手机端深色：跟随 App / 系统 ----------------------------------------
+ * 两条来源都认：
+ *   ① `:root[data-theme]` —— App 侧 WebLoginScreen 在页面加载后注入，这是
+ *      主路径。WebView 的 prefers-color-scheme 默认不跟随宿主 App 的夜间模
+ *      式（要 algorithmic darkening 才跟随），只靠媒体查询会和 App 其余页面
+ *      对不上。
+ *   ② `prefers-color-scheme` —— 手机浏览器直接打开登录页时的兜底。
+ * 色值取 App 的 DarkColors（Color.kt）：背景 #111418 / 文字 #E2E2E5 /
+ * primary #7BAAFB。深色下主按钮文字必须换成 DarkOnPrimary #002F69，白字压
+ * 浅蓝底读不出来。 */
+@media (hover: none) and (pointer: coarse) {
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --wm-primary: #7baafb;
+    --wm-primary-hover: #93bcff;
+    --wm-primary-soft: #35507e;
+    --wm-text: #e2e2e5;
+    --wm-text-muted: #9aa0a6;
+    --wm-text-faint: #7c828a;
+    --wm-field-bg: #23262b;
+    --wm-divider: #2f343a;
+  }
+  :root[data-theme='dark'],
+  :root[data-theme='dark'] body,
+  :root[data-theme='dark'] body.login-pf,
+  :root[data-theme='dark'] .card-pf,
+  :root[data-theme='dark'] .login-pf-page .card-pf { background: #111418 !important; }
+  :root[data-theme='dark'] .wm-field:focus-within { background: #1a1c1e; }
+  :root[data-theme='dark'] .wm-prefix { color: var(--wm-text); }
+  :root[data-theme='dark'] .wm-btn--primary { color: #002f69; }
+  :root[data-theme='dark'] .wm-alert--error { background: #3a1f1f; color: #ffb4ab; }
+  :root[data-theme='dark'] .wm-alert--success { background: #17301f; color: #8fdda9; }
+}
+
+@media (hover: none) and (pointer: coarse) and (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --wm-primary: #7baafb;
+    --wm-primary-hover: #93bcff;
+    --wm-primary-soft: #35507e;
+    --wm-text: #e2e2e5;
+    --wm-text-muted: #9aa0a6;
+    --wm-text-faint: #7c828a;
+    --wm-field-bg: #23262b;
+    --wm-divider: #2f343a;
+  }
+  :root:not([data-theme='light']),
+  :root:not([data-theme='light']) body,
+  :root:not([data-theme='light']) body.login-pf,
+  :root:not([data-theme='light']) .card-pf,
+  :root:not([data-theme='light']) .login-pf-page .card-pf { background: #111418 !important; }
+  :root:not([data-theme='light']) .wm-field:focus-within { background: #1a1c1e; }
+  :root:not([data-theme='light']) .wm-prefix { color: var(--wm-text); }
+  :root:not([data-theme='light']) .wm-btn--primary { color: #002f69; }
+  :root:not([data-theme='light']) .wm-alert--error { background: #3a1f1f; color: #ffb4ab; }
+  :root:not([data-theme='light']) .wm-alert--success { background: #17301f; color: #8fdda9; }
+}
