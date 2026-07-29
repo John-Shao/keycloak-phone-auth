@@ -9,6 +9,36 @@
   var otpEl = document.getElementById('wm-otp');
   var btn = document.getElementById('wm-send-btn');
   var hint = document.getElementById('wm-send-hint');
+
+  // ---- 登录按钮的点亮条件：手机号合法 + 验证码填满 ----
+  // 位置在下面那条 return 之前：即使「获取验证码」这套因缺少节点没装上，
+  // 按钮也不能永远卡在 HTML 里写死的 disabled 上。
+  // 验证码位数跟随后端 authenticator 的 otp_length（部署脚本默认 6），由 ftl
+  // 用 data-otp-len 传进来，改配置时两边一起改。
+  var PHONE_RE = /^1[3-9]\d{9}$/;
+  var submitBtn = document.getElementById('wm-submit-btn');
+  var otpLen = parseInt(form.getAttribute('data-otp-len'), 10) || 6;
+  var OTP_RE = new RegExp('^\\d{' + otpLen + '}$');
+
+  function val(el) { return ((el && el.value) || '').trim(); }
+  function syncSubmit() {
+    if (!submitBtn) return;
+    submitBtn.disabled = !(PHONE_RE.test(val(phoneEl)) && OTP_RE.test(val(otpEl)));
+  }
+  if (submitBtn) {
+    // change 与 input 都听：短信验证码自动填充在个别内核里只发 change
+    ['input', 'change'].forEach(function (ev) {
+      if (phoneEl) phoneEl.addEventListener(ev, syncSubmit);
+      if (otpEl) otpEl.addEventListener(ev, syncSubmit);
+    });
+    // 回车同样能提交表单，禁用按钮拦不住，这里再兜一道
+    form.addEventListener('submit', function (e) {
+      if (submitBtn.disabled) e.preventDefault();
+    });
+    // 服务端回填手机号（出错重渲染）时也要按当前值判定一次
+    syncSubmit();
+  }
+
   if (!sendUrl || !phoneEl || !btn) return;
 
   var t = {

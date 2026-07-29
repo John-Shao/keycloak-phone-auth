@@ -48,6 +48,7 @@
                 <div class="wm-phone-main">
                     <form id="wm-login-form" class="wm-form" action="${url.loginAction}" method="post"
                           data-send="${readBase}/api/keycloak-sms/otp/send/"
+                          data-otp-len="6"
                           data-sending="${msg('jsSending')}"
                           data-resend="${msg('jsResendIn')}"
                           data-sent="${msg('jsOtpSent')}"
@@ -65,7 +66,10 @@
                             <button type="button" id="wm-send-btn" class="wm-suffix-btn" data-label="${msg('doGetVerificationCode')}">${msg("doGetVerificationCode")}</button>
                         </div>
                         <p id="wm-send-hint" class="wm-send-hint"></p>
-                        <button type="submit" class="wm-btn wm-btn--primary wm-sink">${msg("doVerify")}</button>
+                        <#-- 默认禁用，unified-otp.js 在「手机号合法 + 验证码填满」时点亮。
+                             直接写在 HTML 里而不是等 JS 加载后再禁用，避免闪一下可点状态；
+                             本页的「获取验证码」本来就依赖 JS，无脚本环境下走不通登录流程。 -->
+                        <button type="submit" id="wm-submit-btn" class="wm-btn wm-btn--primary wm-sink" disabled>${msg("doVerify")}</button>
                     </form>
                 </div>
                 <p class="wm-agreement">

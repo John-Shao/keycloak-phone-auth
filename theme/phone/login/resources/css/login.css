@@ -490,6 +490,9 @@ body.login-pf,
   :root[data-theme='dark'] .wm-field:focus-within { background: #1a1c1e; }
   :root[data-theme='dark'] .wm-prefix { color: var(--wm-text); }
   :root[data-theme='dark'] .wm-btn--primary { color: #002f69; }
+  /* 禁用态底色是暗蓝(--wm-primary-soft)，深底上再用 onPrimary 的深藏蓝写字
+   * 就是暗压暗；按钮默认就是禁用态，这行文字必须读得出来 */
+  :root[data-theme='dark'] .wm-btn--primary:disabled { color: #c7d6f0; }
   /* wordmark 是近黑单色的，压在深底上基本看不见 —— 翻成白色 */
   :root[data-theme='dark'] .wm-logo { filter: invert(1); }
   :root[data-theme='dark'] .wm-alert--error { background: #3a1f1f; color: #ffb4ab; }
@@ -516,6 +519,8 @@ body.login-pf,
   :root:not([data-theme='light']) .wm-field:focus-within { background: #1a1c1e; }
   :root:not([data-theme='light']) .wm-prefix { color: var(--wm-text); }
   :root:not([data-theme='light']) .wm-btn--primary { color: #002f69; }
+  :root:not([data-theme='light']) .wm-btn--primary:disabled { color: #c7d6f0; }
+  :root:not([data-theme='light']) .wm-logo { filter: invert(1); }
   :root:not([data-theme='light']) .wm-alert--error { background: #3a1f1f; color: #ffb4ab; }
   :root:not([data-theme='light']) .wm-alert--success { background: #17301f; color: #8fdda9; }
 }
