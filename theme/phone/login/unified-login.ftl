@@ -63,7 +63,8 @@
                         <div class="wm-field">
                             <input type="text" id="wm-otp" name="otp" class="wm-input" placeholder="${msg('otpPlaceholder')}"
                                    maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
-                            <button type="button" id="wm-send-btn" class="wm-suffix-btn" data-label="${msg('doGetVerificationCode')}">${msg("doGetVerificationCode")}</button>
+                            <#-- 同提交按钮：默认置灰，手机号合法后由 unified-otp.js 点亮 -->
+                            <button type="button" id="wm-send-btn" class="wm-suffix-btn" data-label="${msg('doGetVerificationCode')}" disabled>${msg("doGetVerificationCode")}</button>
                         </div>
                         <p id="wm-send-hint" class="wm-send-hint"></p>
                         <#-- 默认禁用，unified-otp.js 在「手机号合法 + 验证码填满」时点亮。

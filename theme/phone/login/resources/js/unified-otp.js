@@ -52,13 +52,25 @@
   };
   var left = 0;
 
+  // 「获取验证码」同样手机号合法前置灰。倒计时期间由 tick() 接管按钮状态，
+  // 这里直接让路；读秒结束后再交回这里判定 —— 否则用户在读秒时清空了手机号，
+  // 读秒一结束按钮又自己亮了。
+  function syncSendBtn() {
+    if (left > 0) return;
+    btn.disabled = !PHONE_RE.test(val(phoneEl));
+  }
+  ['input', 'change'].forEach(function (ev) {
+    phoneEl.addEventListener(ev, syncSendBtn);
+  });
+  syncSendBtn();
+
   function setHint(msg, isErr) {
     if (!hint) return;
     hint.textContent = msg || '';
     hint.className = 'wm-send-hint' + (isErr ? ' wm-send-hint--err' : '');
   }
   function tick() {
-    if (left <= 0) { btn.disabled = false; btn.textContent = t.label; return; }
+    if (left <= 0) { btn.textContent = t.label; syncSendBtn(); return; }
     btn.disabled = true;
     btn.textContent = t.resend.replace('{0}', left);
     left -= 1;
@@ -91,13 +103,13 @@
         setHint(t.sent, false);
         if (otpEl) otpEl.focus();
       } else {
-        btn.disabled = false;
         btn.textContent = t.label;
+        syncSendBtn();
         setHint((res.d && res.d.error) || t.fail, true);
       }
     }).catch(function () {
-      btn.disabled = false;
       btn.textContent = t.label;
+      syncSendBtn();
       setHint(t.neterr, true);
     });
   });
