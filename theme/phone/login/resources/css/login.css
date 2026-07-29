@@ -378,11 +378,11 @@ body.login-pf,
   /* 表单本身不撑高，走自然流：按钮紧跟验证码框 */
   #wm-login-form { flex: 0 0 auto; }
 
-  /* 品牌头：与 PC 版一致保留 logo，只是跟着标题一起左对齐（PC 是整体居中）。
-   * 基础样式用 `margin: 0 auto 1.1rem` 居中，这里要把 auto 覆盖掉。 */
+  /* 品牌头：logo 与 PC 版一样左右居中（沿用基础样式的 auto 外边距），标题则
+   * 保持左对齐的原生大标题。 */
   .wm-logo {
     height: 30px;
-    margin: 0 0 20px;
+    margin: 0 auto 20px;
   }
   #kc-page-title {
     text-align: left !important;
