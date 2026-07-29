@@ -353,16 +353,16 @@ body.login-pf,
      * 丢弃，合并成一条写就连兜底都没了（实测顶部因此几乎贴到状态栏）。分成
      * 「固定值 + 带 env 的覆盖」两组做渐进增强，后者失效也还剩前者。
      * 顶部留白不用 vh：键盘弹起视口一缩，vh 跟着塌，标题会被顶到状态栏下。 */
-    padding: 48px 24px 88px !important;
+    padding: 48px 24px 32px !important;
     padding-top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
     padding-right: calc(env(safe-area-inset-right, 0px) + 24px) !important;
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 88px) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 32px) !important;
     padding-left: calc(env(safe-area-inset-left, 0px) + 24px) !important;
-    /* 表单块在「协议以上」的范围内竖向居中：短表单配长屏，按钮与钉底协议之
-     * 间会空出半屏，居中后这片空白被一分为二，观感上是留白而不是漏排。
-     * 只要求 .card-pf 自己是 flex(两个子元素:标题 header + #kc-content)，不
-     * 依赖任何后代配合;若 100vh 再度失效卡片塌回内容高度，居中自然失效、退
-     * 回顶部对齐，不会坏版。下 padding 给钉底的协议留出安全距离。 */
+    /* 整块内容(品牌头 + 表单 + 按钮 + 协议)竖向居中：短表单配长屏，顶部对齐
+     * 会在下方空出大半屏，居中后这片空白由上下两端分担，观感上是留白而不是
+     * 漏排。只要求 .card-pf 自己是 flex(两个子元素:标题 header + #kc-content)，
+     * 不依赖任何后代配合;若 100vh 再度失效卡片塌回内容高度，居中自然失效、
+     * 退回顶部对齐，不会坏版。 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -425,23 +425,11 @@ body.login-pf,
   /* 桌面右栏靠「下沉」与左侧二维码框底对齐；单列全屏下不能下沉，否则按钮被
    * 甩到屏幕底、中间留一段莫名其妙的空白。改成紧跟表单。 */
   .wm-sink { margin-top: 24px; }
-  /* 协议行钉到屏幕底，吃掉屏幕下半那片空白。
-   * 用 position:fixed 而不是 margin-top:auto —— 后者要 .card-pf → #kc-content
-   * → #kc-content-wrapper → .wm-dual → .wm-col-phone → .wm-phone-main 六层
-   * 祖先全部配合成竖向 flex 才成立，桌面 Chrome 上量着是对的，真机 WebView
-   * 上没走通(2026-07-28 实测)。fixed 直接对视口定位，不依赖任何祖先。 */
+  /* 协议紧跟在主按钮下方，随表单块一起竖向居中 —— 曾经把它 fixed 钉在屏幕
+   * 底，但按钮与协议之间会空出大半屏；现在整块居中，空白改由上下两端分担。 */
   .wm-col-phone > .wm-agreement {
-    position: fixed;
-    left: 0;
-    right: 0;
-    /* 同 .card-pf 的 padding：`calc(env(...) + X)` 在真机 WebView 上会被整条
-     * 丢弃，`bottom` 一丢就退回 auto —— 而 fixed + top/bottom:auto 的元素恰好
-     * 渲染在它的静态位置，看起来就像 fixed 没生效（2026-07-28 真机实测）。
-     * 先写死兜底值，再用带 env 的那条做渐进增强。 */
-    bottom: 20px;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
-    margin: 0;
-    padding: 0 24px;
+    margin: 20px 0 0;
+    padding: 0;
     font-size: 13px;
   }
 
