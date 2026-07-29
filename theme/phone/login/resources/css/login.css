@@ -353,11 +353,19 @@ body.login-pf,
      * 丢弃，合并成一条写就连兜底都没了（实测顶部因此几乎贴到状态栏）。分成
      * 「固定值 + 带 env 的覆盖」两组做渐进增强，后者失效也还剩前者。
      * 顶部留白不用 vh：键盘弹起视口一缩，vh 跟着塌，标题会被顶到状态栏下。 */
-    padding: 48px 24px 24px !important;
+    padding: 48px 24px 88px !important;
     padding-top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
     padding-right: calc(env(safe-area-inset-right, 0px) + 24px) !important;
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 88px) !important;
     padding-left: calc(env(safe-area-inset-left, 0px) + 24px) !important;
+    /* 表单块在「协议以上」的范围内竖向居中：短表单配长屏，按钮与钉底协议之
+     * 间会空出半屏，居中后这片空白被一分为二，观感上是留白而不是漏排。
+     * 只要求 .card-pf 自己是 flex(两个子元素:标题 header + #kc-content)，不
+     * 依赖任何后代配合;若 100vh 再度失效卡片塌回内容高度，居中自然失效、退
+     * 回顶部对齐，不会坏版。下 padding 给钉底的协议留出安全距离。 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   /* 标题外面还包着 PatternFly 的 header，它自带下边距，会和标题的
    * margin-bottom 叠加成一段过宽的空白。间距只由 #kc-page-title 说了算。 */
@@ -370,8 +378,12 @@ body.login-pf,
   /* 表单本身不撑高，走自然流：按钮紧跟验证码框 */
   #wm-login-form { flex: 0 0 auto; }
 
-  /* 品牌头：外来 wordmark 收起（App 内已有品牌语境），标题改原生大标题、左对齐 */
-  .wm-logo { display: none; }
+  /* 品牌头：与 PC 版一致保留 logo，只是跟着标题一起左对齐（PC 是整体居中）。
+   * 基础样式用 `margin: 0 auto 1.1rem` 居中，这里要把 auto 覆盖掉。 */
+  .wm-logo {
+    height: 30px;
+    margin: 0 0 20px;
+  }
   #kc-page-title {
     text-align: left !important;
     margin: 0 0 28px !important;
@@ -490,6 +502,8 @@ body.login-pf,
   :root[data-theme='dark'] .wm-field:focus-within { background: #1a1c1e; }
   :root[data-theme='dark'] .wm-prefix { color: var(--wm-text); }
   :root[data-theme='dark'] .wm-btn--primary { color: #002f69; }
+  /* wordmark 是近黑单色的，压在深底上基本看不见 —— 翻成白色 */
+  :root[data-theme='dark'] .wm-logo { filter: invert(1); }
   :root[data-theme='dark'] .wm-alert--error { background: #3a1f1f; color: #ffb4ab; }
   :root[data-theme='dark'] .wm-alert--success { background: #17301f; color: #8fdda9; }
 }
