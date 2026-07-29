@@ -422,6 +422,11 @@ body.login-pf,
     position: fixed;
     left: 0;
     right: 0;
+    /* 同 .card-pf 的 padding：`calc(env(...) + X)` 在真机 WebView 上会被整条
+     * 丢弃，`bottom` 一丢就退回 auto —— 而 fixed + top/bottom:auto 的元素恰好
+     * 渲染在它的静态位置，看起来就像 fixed 没生效（2026-07-28 真机实测）。
+     * 先写死兜底值，再用带 env 的那条做渐进增强。 */
+    bottom: 20px;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
     margin: 0;
     padding: 0 24px;
