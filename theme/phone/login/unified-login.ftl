@@ -1,8 +1,10 @@
 <#import "template.ftl" as layout>
+<#-- 静态资源版本号，见 theme.properties 里 wmAssetVersion 的说明 -->
+<#assign wmV = properties.wmAssetVersion!"0">
 <@layout.registrationLayout displayInfo=false; section>
 
     <#if section = "header">
-        <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg" alt="we-meet" />
+        <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg?v=${wmV}" alt="we-meet" />
         <span class="wm-page-title">${msg("loginTitle")}</span>
 
     <#elseif section = "form">
@@ -34,7 +36,7 @@
                     <form id="wm-qr-confirm-form" action="${url.loginAction}" method="post" style="display:none">
                         <input type="hidden" name="qrConfirm" value="1" />
                     </form>
-                    <script src="${url.resourcesPath}/js/unified-poll.js"></script>
+                    <script src="${url.resourcesPath}/js/unified-poll.js?v=${wmV}"></script>
                 <#else>
                     <p class="wm-helper">${msg("qrGenFailed")}</p>
                 </#if>
@@ -82,7 +84,7 @@
             </div>
         </div>
 
-        <script src="${url.resourcesPath}/js/unified-otp.js"></script>
+        <script src="${url.resourcesPath}/js/unified-otp.js?v=${wmV}"></script>
 
     </#if>
 

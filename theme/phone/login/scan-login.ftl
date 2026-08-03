@@ -1,8 +1,10 @@
 <#import "template.ftl" as layout>
+<#-- 静态资源版本号，见 theme.properties 里 wmAssetVersion 的说明 -->
+<#assign wmV = properties.wmAssetVersion!"0">
 <@layout.registrationLayout displayInfo=false; section>
 
     <#if section = "header">
-        <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg" alt="we-meet" />
+        <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg?v=${wmV}" alt="we-meet" />
         <span class="wm-page-title">${msg("scanTitle")}</span>
 
     <#elseif section = "form">
@@ -27,7 +29,7 @@
                 </div>
                 <p class="wm-helper">${msg("scanOpenApp")}</p>
             </div>
-            <script src="${url.resourcesPath}/js/scan-poll.js"></script>
+            <script src="${url.resourcesPath}/js/scan-poll.js?v=${wmV}"></script>
         <#else>
             <p class="wm-helper">${msg("qrGenFailed")}</p>
         </#if>

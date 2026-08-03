@@ -1,8 +1,10 @@
 <#import "template.ftl" as layout>
+<#-- 静态资源版本号，见 theme.properties 里 wmAssetVersion 的说明 -->
+<#assign wmV = properties.wmAssetVersion!"0">
 <@layout.registrationLayout displayInfo=false; section>
 
     <#if section = "header">
-        <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg" alt="we-meet" />
+        <img class="wm-logo" src="${url.resourcesPath}/img/logo.svg?v=${wmV}" alt="we-meet" />
         <span class="wm-page-title">${msg("otpTitle")}</span>
 
     <#elseif section = "form">
@@ -54,7 +56,7 @@
             <a class="wm-link" href="${url.loginRestartFlowUrl}">‹ ${msg("reenterPhone")}</a>
         </p>
 
-        <script src="${url.resourcesPath}/js/otp-countdown.js"></script>
+        <script src="${url.resourcesPath}/js/otp-countdown.js?v=${wmV}"></script>
 
     </#if>
 
